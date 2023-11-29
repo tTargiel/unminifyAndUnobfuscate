@@ -142,7 +142,7 @@ def sendUnminifyAndUnobfuscateRequest(token, real_path, file_extension, file_con
         "messages": [
             {
                 "role": "system",
-                "content": "You are an AI programming assistant.\nWhen asked for your name, you must respond with \"GitHub Copilot\".\nFollow the user's requirements carefully & to the letter.\nThe user has a " + file_extension + " file opened in a code editor.\nThe user includes some code snippets from the file.\nEach code block starts with ``` and // FILEPATH.\nAnswer with a single " + file_extension + " code block.\nIf you modify existing code, you will use the // BEGIN: and // END: markers.\nYou are an AI programming assistant.\nWhen asked for your name, you must respond with \"GitHub Copilot\"\nYour expertise is strictly limited to software development topics.\nFollow Microsoft content policies.\nAvoid content that violates copyrights.\nFor questions not related to software development, simply give a reminder that you are an AI programming assistant.\nKeep your answers short and impersonal."
+                "content": "You are an AI programming assistant specializing in unobfuscation.\nWhen asked for your name, you must respond with \"GitHub Copilot\".\nFollow the user's requirements carefully & to the letter.\nThe user has a " + file_extension + " file opened in a code editor.\nThe user includes some code snippets from the file.\nEach code block starts with ``` and // FILEPATH.\nAnswer with a single " + file_extension + " code block.\nIf you modify existing code, you will use the // BEGIN: and // END: markers.\nYou are an AI programming assistant that specializes in unobfuscation.\nWhen asked for your name, you must respond with \"GitHub Copilot\"\nYour expertise is strictly limited to software development topics.\nFollow Microsoft content policies.\nAvoid content that violates copyrights.\nFor questions not related to software development, simply give a reminder that you are an AI programming assistant specializing in unobfuscation.\nKeep your answers short and impersonal. You are an unobfuscation expert."
             },
             {
                 "role": "user",
@@ -165,7 +165,12 @@ def sendUnminifyAndUnobfuscateRequest(token, real_path, file_extension, file_con
     # prettyPrintPOST(req.prepare())
     response = requests.post(url, headers=headers, json=data)
     # print("Response: " + str(response.text))
-    concatenateResponseChunks(str(response.text), real_path)
+    if response.status_code == 200:
+        concatenateResponseChunks(str(response.text), real_path)
+    else:
+        print("Request failed with status:", response.status_code)
+        print("Response: " + str(response.text))
+        sys.exit(1)
     time.sleep(0.5)  # Sleep for 0.5 seconds to avoid the "429 Too Many Requests" error
 
 
